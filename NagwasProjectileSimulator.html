@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Nagwa's Projectile Motion Simulator</title>
+  <link
+    rel="icon"
+    href="https://i.ibb.co/8B48hG8/nagwa.png"
+    type="image/x-icon"
+  />
+
+  <style>
+    body {
+      background-color: black;
+      font-family: "Lucida Console";
+      box-sizing: border-box;
+      text-align: center;
+    }
+    h1 {
+      color: white;
+      font: large;
+    }
+
+    #main-container {
+      display: flex;
+      justify-content: space-evenly;
+    }
+    .sub-container {
+      display: flex;
+      flex-direction: column;
+      width: 20%;
+      height: 100%;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+    .control-directions-box {
+      padding: 10px;
+      border-radius: 5px;
+      border: 2px solid white;
+      width: 100%;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #projectile-container {
+      width: 1000px;
+      height: 577px;
+      border: 2px solid white;
+      overflow: auto;
+      padding: 0px;
+      background-color: white;
+      position: relative;
+    }
+
+    .slider-container {
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .slider {
+      height: 60px;
+      width: 100%;
+      background: white;
+      border-radius: 10px;
+      padding: 0 65px 0 45px;
+      box-sizing: border-box;
+    }
+    .sliderValue {
+      position: relative;
+      width: 100%;
+    }
+    .sliderValue span {
+      position: absolute;
+      height: 35px;
+      min-width: 35px;
+      left: 50%;
+      background: red;
+      color: white;
+      font-weight: 500;
+      top: -20px;
+      border: solid 3px #fff;
+      border-top-left-radius: 50%;
+      border-top-right-radius: 50%;
+      border-bottom-left-radius: 50%;
+      z-index: 3;
+      padding-top: 10px;
+      box-sizing: border-box;
+      transform: rotate(45deg);
+    }
+
+    .sliderValue span div {
+      transform: rotate(-45deg);
+      margin-left: 5px;
+    }
+
+    .slider-input {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    #min {
+      position: absolute;
+      font-size: 18px;
+      font-weight: 600;
+      color: black;
+      left: -22px;
+    }
+    #max {
+      position: absolute;
+      font-size: 18px;
+      font-weight: 600;
+      color: black;
+      right: -43px;
+    }
+
+    .slider-input input {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    #start-button {
+      background-color: rgb(167, 164, 164);
+      width: 60%;
+      text-align: center;
+      height: 30px;
+      font: large bold;
+      font-family: "Lucida Console";
+      border-radius: 3px;
+      box-shadow: white 1px 1px;
+      cursor: pointer;
+      margin: 25px;
+    }
+    #start-button:hover {
+      background-color: white;
+    }
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+    }
+  </style>
+</head>
+<body>
+  <html>
+    <h1>Projectile Motion Simulator</h1>
+    <div id="main-container">
+      <div class="sub-container">
+        <div class="control-directions-box" style="margin-bottom: 10%">
+          <h2>Control Box</h2>
+
+          <div class="slider-container">
+            <p>Velocity</p>
+            <div class="slider">
+              <div class="sliderValue">
+                <span id="velocity-value-container"
+                  ><div id="velocity-value">5</div></span
+                >
+              </div>
+              <div class="slider-input">
+                <div id="min">0</div>
+                <input
+                  id="velocity-input"
+                  type="range"
+                  min="0"
+                  max="10"
+                  value="5"
+                  steps="1"
+                />
+                <div id="max">10</div>
+              </div>
+            </div>
+          </div>
+          <div class="slider-container">
+            <p>Angle</p>
+            <div class="slider">
+              <div class="sliderValue">
+                <span id="angle-value-container"
+                  ><div id="angle-value">45</div></span
+                >
+              </div>
+              <div class="slider-input">
+                <div id="min">0</div>
+                <input
+                  id="angle-input"
+                  type="range"
+                  min="0"
+                  max="90"
+                  value="45"
+                  steps="1"
+                />
+                <div id="max">90</div>
+              </div>
+            </div>
+          </div>
+          <input
+            type="button"
+            id="start-button"
+            value="start"
+            onclick="start()"
+          />
+        </div>
+        <div class="control-directions-box">
+          <h3>How to use?</h3>
+          <ol>
+            <li>Adjust the angle and velocity</li>
+            <li>Press start</li>
+          </ol>
+        </div>
+      </div>
+      <div id="projectile-container">
+        <img
+          id="garden-img"
+          width="995"
+          height="573"
+          src="https://i.ibb.co/GHY5pTL/Green-Grass-Lawn-with-Clouds-and-Sun-on-Light-Blue-Sky.jpg"
+          style="margin: 0px; position: absolute"
+        />
+        <img
+          id="ball-img"
+          src="https://i.ibb.co/348FkxV/basketball.png"
+          width="40"
+          height="40"
+          alt="basketball"
+          style="position: absolute; z-index: 2"
+        />
+
+        <canvas id="canvas" width="995" height="573" style="position: relative">
+          Your browser does not support HTML5 Canvas.
+        </canvas>
+      </div>
+    </div>
+  </html>
+</body>
+
+<script>
+  // constants
+  const canvas = document.getElementById("canvas");
+
+  const context = canvas.getContext("2d");
+  const image = document.getElementById("garden-img");
+  const ballImage = document.getElementById("ball-img");
+
+  const minWidth = 995;
+  const minHeight = 573;
+  context.font = "12px Arial bold";
+  context.textAlign = "start";
+  const grid_size = 25;
+
+  const radius = 3;
+  const gravity = 0.1;
+
+  var angle = 0;
+  var velocity = 0;
+  var initalPos = { x: 0, y: canvas.height - radius };
+  var ball = { x: initalPos.x, y: initalPos.y, vx: 0, vy: 0, r: radius };
+
+  const velocityInput = document.getElementById("velocity-input");
+  const velocityValue = document.getElementById("velocity-value");
+  const velocityContainer = document.getElementById("velocity-value-container");
+  const angleInput = document.getElementById("angle-input");
+  const angleValue = document.getElementById("angle-value");
+  const angleContainer = document.getElementById("angle-value-container");
+
+  drawGrid();
+
+  function drawGrid() {
+    var num_lines_x = Math.floor(canvas.height / grid_size);
+    var num_lines_y = Math.floor(canvas.width / grid_size);
+
+    context.lineWidth = 1;
+    context.strokeStyle = "rgb(116, 116, 116)";
+    context.fillStyle = "black";
+
+    // Draw grid lines along X-axis
+    for (var i = 0; i <= num_lines_x; i++) {
+      context.beginPath();
+      context.moveTo(0, grid_size * i + 0.5);
+      context.lineTo(canvas.width, grid_size * i + 0.5);
+
+      context.stroke();
+    }
+    // Ticks marks along the positive X-axis
+    for (i = 1; i < num_lines_y; i++) {
+      context.fillText(i, grid_size * i - 2, canvas.height - 8);
+    }
+
+    // Draw grid lines along Y-axis
+    for (i = 0; i <= num_lines_y; i++) {
+      context.beginPath();
+      context.moveTo(grid_size * i + 0.5, 0);
+      context.lineTo(grid_size * i + 0.5, canvas.height);
+
+      context.stroke();
+    }
+
+    for (i = 1; i < num_lines_x; i++) {
+      context.fillText(num_lines_x - i, 8, grid_size * i + 3);
+    }
+  }
+
+  function start() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    angle = angleInput.value;
+    velocity = velocityInput.value;
+    var radians = ((angle - 90) * Math.PI) / 180;
+
+    var maxWidth =
+      ((Math.pow(velocity, 2) * Math.sign(angle * 2)) / gravity) * 3;
+    var maxHeight =
+      ((Math.pow(velocity, 2) * Math.pow(Math.sign(angle), 2)) /
+        (2 * gravity)) *
+      3;
+
+    if (minWidth < maxWidth) canvas.width = maxWidth;
+    else canvas.width = minWidth;
+    if (minHeight < maxHeight) canvas.height = maxHeight;
+    else canvas.height = minHeight;
+
+    image.width = canvas.width;
+    image.height = canvas.height;
+    initalPos = { x: 0, y: canvas.height - radius };
+    ball = {
+      x: initalPos.x,
+      y: initalPos.y,
+      vx: Math.cos(radians) * velocity,
+      vy: Math.sin(radians) * velocity,
+      r: radius,
+    };
+
+    drawGrid();
+  }
+  // responsible foe the projectile
+  setInterval(function () {
+    if (ball.y + ball.r <= canvas.height) {
+      ball.vy += gravity;
+    } else {
+      ball.vx = 0;
+      ball.vy = 0;
+      ball.y = canvas.height - ball.r;
+    }
+    ball.x += ball.vx * 3;
+    ball.y += ball.vy * 3;
+
+    ballImage.style.top = ball.y - 40 + "px";
+    ballImage.style.left = ball.x - 10 + "px";
+
+    context.fillStyle = "red";
+    context.beginPath();
+    context.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2, true);
+    context.closePath();
+    context.fill();
+  }, 50);
+
+  // sliders
+
+  velocityInput.oninput = () => {
+    let value = velocityInput.value;
+    velocityValue.textContent = value;
+    velocityContainer.style.left = ((value / 2) * 200) / 10 + "%";
+  };
+
+  angleInput.oninput = () => {
+    let value = angleInput.value;
+    angleValue.textContent = value;
+    angleContainer.style.left = ((value / 2) * 200) / 90 + "%";
+  };
+</script>
